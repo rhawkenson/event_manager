@@ -49,7 +49,7 @@
 #   puts "#{name} #{zipcode}"
 # end 
 
-# # -----Iteration 3: Using Google's Civiv Information  -----
+# # -----Iteration 3: Using Google's Civic Information  -----
 # require "csv"
 # require 'google/apis/civicinfo_v2'
 
@@ -145,6 +145,8 @@ end
 contents.each do |row|
   phone = row[:HomePhone]
   phone = clean_phone(phone)
+  puts phone
 end 
 
-# -----Iteration 6: Time Targetting -----
+
+
