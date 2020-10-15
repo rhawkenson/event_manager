@@ -87,7 +87,7 @@
 # end 
 
 # -----Iteration 4: Form Letters  -----
-template_letter = File.read "form_letter.html"
+template_letter = File.read "form_letter.erb"
 
 require "csv"
 require 'google/apis/civicinfo_v2'
