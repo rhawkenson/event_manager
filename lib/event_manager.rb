@@ -35,14 +35,42 @@
 #   If the zip code is <5 digits, place a 0 at the beginning 
 #   If the zipcode is not present, set 00000 as the zipcode
 
+# require "csv"
+
+# def clean_zipcode(zipcode)
+#   if zipcode.nil?
+#     "00000"
+#   elsif zipcode.length < 5
+#     zipcode.rjust(5, "0")
+#   elsif zipcode.length > 5
+#     zipcode.slice[0..4]
+#   else 
+#     zipcode
+#   end 
+# end 
+
+# contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
+
+# contents.each do |row|
+#   name = row[:first_name]
+#   zipcode = clean_zipcode(row[:zipcode])
+#   puts "#{name} #{zipcode}"
+# end 
+
+# -----Iteration 3: Using Google's Civiv Information  -----
 require "csv"
+require 'google/apis/civicinfo_v2'
+
+civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
+civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+
 
 def clean_zipcode(zipcode)
   if zipcode.nil?
     "00000"
   elsif zipcode.length < 5
     zipcode.rjust(5, "0")
-  elsif zipcode.length < 5
+  elsif zipcode.length > 5
     zipcode.slice[0..4]
   else 
     zipcode
