@@ -136,3 +136,15 @@ contents.each do |row|
   form_letter = erb_template.result(binding)
   save_thank_you_letter(id,form_letter)
 end 
+
+# -----Iteration 5: Clean Phone Numbers -----
+def clean_phone(phone)
+  phone.to_s.rjust(11, '0')[1..10]
+end 
+
+contents.each do |row|
+  phone = row[:HomePhone]
+  phone = clean_phone(phone)
+end 
+
+# -----Iteration 6: Time Targetting -----
