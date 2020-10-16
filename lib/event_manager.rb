@@ -166,14 +166,36 @@
 #   puts phone
 # end 
 
-# -----Iteration 6: Time Targetting -----
+# # -----Iteration 6: Time Targetting -----
+# require 'csv'
+# require 'date'
+# contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
+# @hourly_arr = Array.new
+
+
+# def modes(array, find_all=true)
+#   histogram = array.inject(Hash.new(0)) { |h, n| h[n] += 1; h }
+#   modes = nil
+#   histogram.each_pair do |item, times|
+#     modes << item if modes && times == modes[0] and find_all
+#     modes = [times, item] if (!modes && times>1) or (modes && times>modes[0])
+#   end
+#   return modes ? modes[1...modes.size] : modes
+# end
+
+# contents.each do |row|
+#   time = row[:regdate]
+#   reg_hour = DateTime.strptime(time, '%D %R').hour
+#   @hourly_arr += [reg_hour]
+# end 
+
+# puts "The most often hours to register are: #{modes(@hourly_arr)}"
+
+# -----Iteration 7: Day of Week Targetting -----
 require 'csv'
 require 'date'
 contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
-@hourly_arr = Array.new
-
-def hourly_data(time)
-end 
+@days_arr = Array.new
 
 def modes(array, find_all=true)
   histogram = array.inject(Hash.new(0)) { |h, n| h[n] += 1; h }
@@ -182,16 +204,21 @@ def modes(array, find_all=true)
     modes << item if modes && times == modes[0] and find_all
     modes = [times, item] if (!modes && times>1) or (modes && times>modes[0])
   end
-  return modes ? modes[1...modes.size] : modes
+  return modes ? days_to_human_readable(modes[1...modes.size]) : modes
+end
+
+def days_to_human_readable(day)
+  days_array = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday']
+  days_array[day.join.to_i]
 end
 
 contents.each do |row|
   time = row[:regdate]
-  reg_hour = DateTime.strptime(time, '%D %R').hour
-  @hourly_arr += [reg_hour]
+  reg_day = DateTime.strptime(time, '%D %R').wday
+  @days_arr += [reg_day]
 end 
 
-puts "The most often hours to register are: #{modes(@hourly_arr)}"
+puts "The most often day of the week to register is: #{modes(@days_arr)}"
 
 
 
