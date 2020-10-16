@@ -137,34 +137,61 @@
 #   save_thank_you_letter(id,form_letter)
 # end 
 
-# -----Iteration 5: Clean Phone Numbers -----
+# # -----Iteration 5: Clean Phone Numbers -----
 
-def clean_phone(phone)
-  phone_arr = phone.split("").select {|num| num.count("0-9") > 0 }.join("")
-  if phone_arr.length > 11
-    return nil
-  elsif phone_arr.length == 11
-    if phone_arr.start_with?("1")
-      phone_arr[1..10]
-    else
-      return nil 
-    end 
-  elsif phone_arr.length < 10
-    return nil 
-  else
-    phone_arr
-  end 
+# def clean_phone(phone)
+#   phone_arr = phone.split("").select {|num| num.count("0-9") > 0 }.join("")
+#   if phone_arr.length > 11
+#     return nil
+#   elsif phone_arr.length == 11
+#     if phone_arr.start_with?("1")
+#       phone_arr[1..10]
+#     else
+#       return nil 
+#     end 
+#   elsif phone_arr.length < 10
+#     return nil 
+#   else
+#     phone_arr
+#   end 
+# end 
+
+# require 'csv'
+# contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
+
+
+# contents.each do |row|
+#   phone = row[:homephone]
+#   phone = clean_phone(phone)
+#   puts phone
+# end 
+
+# -----Iteration 6: Time Targetting -----
+require 'csv'
+require 'date'
+contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
+@hourly_arr = Array.new
+
+def hourly_data(time)
 end 
 
-require 'csv'
-contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
-
+def modes(array, find_all=true)
+  histogram = array.inject(Hash.new(0)) { |h, n| h[n] += 1; h }
+  modes = nil
+  histogram.each_pair do |item, times|
+    modes << item if modes && times == modes[0] and find_all
+    modes = [times, item] if (!modes && times>1) or (modes && times>modes[0])
+  end
+  return modes ? modes[1...modes.size] : modes
+end
 
 contents.each do |row|
-  phone = row[:homephone]
-  phone = clean_phone(phone)
-  puts phone
+  time = row[:regdate]
+  reg_hour = DateTime.strptime(time, '%D %R').hour
+  @hourly_arr += [reg_hour]
 end 
+
+puts "The most often hours to register are: #{modes(@hourly_arr)}"
 
 
 
