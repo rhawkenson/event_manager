@@ -86,64 +86,82 @@
 #     puts "#{name} #{zipcode} #{legislators}"
 # end 
 
-# -----Iteration 4: Form Letters  -----
-template_letter = File.read "form_letter.erb"
+# # -----Iteration 4: Form Letters  -----
+# template_letter = File.read "form_letter.erb"
 
-require "csv"
-require 'google/apis/civicinfo_v2'
-require 'erb'
+# require "csv"
+# require 'google/apis/civicinfo_v2'
+# require 'erb'
 
-def clean_zipcode(zipcode)
-  zipcode.to_s.rjust(5, "0")[0..4] 
-end 
+# def clean_zipcode(zipcode)
+#   zipcode.to_s.rjust(5, "0")[0..4] 
+# end 
 
-def legislator_by_zipcode(zip)
-  civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-  civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+# def legislator_by_zipcode(zip)
+#   civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
+#   civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
 
-  begin 
-    civic_info.representative_info_by_address(
-      address: zip,
-      levels: 'country',
-      roles: ['legislatorUpperBody', 'legislatorLowerBody']
-      ).officials
-  rescue
-    "You can find your representatives by visiting www.commoncause.org/take-action/find-elected-officials"
-  end
-end
+#   begin 
+#     civic_info.representative_info_by_address(
+#       address: zip,
+#       levels: 'country',
+#       roles: ['legislatorUpperBody', 'legislatorLowerBody']
+#       ).officials
+#   rescue
+#     "You can find your representatives by visiting www.commoncause.org/take-action/find-elected-officials"
+#   end
+# end
 
-def save_thank_you_letter(id,form_letter)
-  Dir.mkdir("output") unless Dir.exists?("output")
-  filename = "output/thanks_#{id}.html"
-  File.open(filename,'w') do |file|
-    file.puts form_letter 
+# def save_thank_you_letter(id,form_letter)
+#   Dir.mkdir("output") unless Dir.exists?("output")
+#   filename = "output/thanks_#{id}.html"
+#   File.open(filename,'w') do |file|
+#     file.puts form_letter 
+#   end 
+# end 
+
+# contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
+
+# template_letter = File.read "form_letter.erb"
+# erb_template = ERB.new template_letter
+
+# contents.each do |row|
+#   id = row[0]
+#   name = row[:first_name]
+  
+#   zipcode = clean_zipcode(row[:zipcode])
+  
+#   legislators = legislator_by_zipcode(zipcode)
+  
+#   form_letter = erb_template.result(binding)
+#   save_thank_you_letter(id,form_letter)
+# end 
+
+# -----Iteration 5: Clean Phone Numbers -----
+
+def clean_phone(phone)
+  phone_arr = phone.split("").select {|num| num.count("0-9") > 0 }.join("")
+  if phone_arr.length > 11
+    return nil
+  elsif phone_arr.length == 11
+    if phone_arr.start_with?("1")
+      phone_arr[1..10]
+    else
+      return nil 
+    end 
+  elsif phone_arr.length < 10
+    return nil 
+  else
+    phone_arr
   end 
 end 
 
+require 'csv'
 contents = CSV.open "event_attendees.csv", headers: true, header_converters: :symbol
 
-template_letter = File.read "form_letter.erb"
-erb_template = ERB.new template_letter
 
 contents.each do |row|
-  id = row[0]
-  name = row[:first_name]
-  
-  zipcode = clean_zipcode(row[:zipcode])
-  
-  legislators = legislator_by_zipcode(zipcode)
-  
-  form_letter = erb_template.result(binding)
-  save_thank_you_letter(id,form_letter)
-end 
-
-# -----Iteration 5: Clean Phone Numbers -----
-def clean_phone(phone)
-  phone.to_s.rjust(11, '0')[1..10]
-end 
-
-contents.each do |row|
-  phone = row[:HomePhone]
+  phone = row[:homephone]
   phone = clean_phone(phone)
   puts phone
 end 
